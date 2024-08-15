@@ -14,7 +14,18 @@ namespace mediaboxservice
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _watcher = new();
+            string folderPath = _configuration["WatchFolderPath"]!;
+            bool includeSubdirectories = bool.Parse(_configuration["IncludeSubdirectories"]!);
+            string fileFilter = _configuration["FileFilter"]!;
+
+            _watcher = new ()
+            {
+                Path = folderPath,
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.LastAccess | NotifyFilters.DirectoryName | NotifyFilters.CreationTime,
+                Filter = fileFilter,
+                IncludeSubdirectories = includeSubdirectories,
+                EnableRaisingEvents = true
+            };
 
             return base.StartAsync(cancellationToken);
         }
